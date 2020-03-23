@@ -220,6 +220,86 @@ def plot_time_to_double_cases(figno, step, countries, max_days=None, highlight=[
   fig.show()
 
 
+def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
+  """
+  Starting from 1th case
+  """
+  fig = plt.figure(figno)
+
+  for c in countries:
+    cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=1)]
+    cnt.index = np.arange(0, len(cnt)) # Index by num of days from 1st case
+
+    xbasis = np.arange(0,100).tolist()
+    ybasis = []
+    for nrecovered in xbasis:
+      recov = cnt[cnt["Recovered"]>nrecovered]
+      if len(recov)>0:
+        ndays = recov.head(1).index.tolist()[0]
+        ybasis.append(ndays)
+    xbasis = xbasis[:len(ybasis)]
+
+    if c=="Thailand":
+      last_recov = cnt["Recovered"].tail(1).tolist()[0]
+      last_ndays = cnt.tail(1).index.tolist()[0]
+
+      # Extend the line with latest observation
+      ybasis.append(last_ndays)
+      xbasis.append(last_recov)
+
+      strcase = "{} recovered in {} days".format(
+        last_recov,
+        last_ndays)
+
+      y = last_ndays
+      x = last_recov
+      plt.annotate(strcase, xy=(x,y), xytext=(x+15,y-6), arrowprops=dict(arrowstyle="->"))
+    
+    thick = 3 if c in highlight else 1
+    plt.plot(xbasis, ybasis, label=c, linewidth=thick)
+
+  plt.xlabel("Number of Recovered cases")
+  plt.ylabel("Days taken")
+  plt.title("Days taken to recover")
+  plt.legend()
+  fig.show()
+
+
+def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[]):
+  """
+  Start from 1st case
+  """
+  fig = plt.figure(figno)
+
+  for c in countries:
+    cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=1)]
+    cnt["days"] = np.arange(0, len(cnt))
+    cnt["recover_per_day"] = cnt["Recovered"] / cnt["days"]
+    cnt["recover_per_day"] = cnt["recover_per_day"].fillna(0)
+    cnt[cnt["recover_per_day"]>0] # Cut off, starting from 1st recovery
+    cnt = cnt.set_index("days")
+
+    # Start showing from 20th day after first case
+    cnt = cnt[cnt.index > 20]
+
+    # if c=="Thailand":
+    #   first_recov = cnt[cnt["Recovered"]>0]
+    #   x = first_recov.head(1).index.tolist()[0]
+    #   y = first_recov.head(1)["recover_per_day"].tolist()[0]
+
+    #   strcase = "First recovery after {} days".format(x)
+    #   plt.annotate(strcase, xy=(x,y), xytext=(x+1,y+6), arrowprops=dict(arrowstyle="->"))
+
+    thick = 3 if c in highlight else 1
+    plt.plot(cnt["recover_per_day"], label=c, linewidth=thick)
+
+  plt.xlabel("Days")
+  plt.ylabel("Avg recovered / day")
+  plt.title("Average number of recovery per day")
+  plt.legend()
+  fig.show()
+
+
 if __name__ == '__main__':
   """
   Usage:
@@ -250,6 +330,8 @@ if __name__ == '__main__':
   max_days = 14
   highlight = ["Thailand"]
 
+  excep = lambda cnt,c: list(set(cnt)-set([c]))
+
   # Plot
   # plot_daily_cases(1, step, countries, max_days, highlight)
   plot_daily_patients(2, step, countries, max_days, highlight)
@@ -258,4 +340,6 @@ if __name__ == '__main__':
   plot_mortal_rate(5, step, countries, max_days, highlight)
   plot_mortal_over_recovery_rate(6, step, countries, max_days, highlight)
   plot_time_to_double_cases(7, step, countries, max_days, highlight)
+  plot_time_to_recover(8, step, countries, max_days, highlight)
+  plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
   input("Press RETURN to end ...")
