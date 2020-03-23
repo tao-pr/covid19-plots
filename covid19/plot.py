@@ -202,20 +202,20 @@ def plot_time_to_double_cases(figno, step, countries, max_days=None, highlight=[
       ybasis.append(last_ndays)
       xbasis.append(last_confirmed)
 
-      strcase = "{} cases after {} days".format(
+      strcase = "{} cases in {} days after 100th".format(
         last_confirmed,
         last_ndays)
 
-      x = last_ndays
-      y = last_confirmed
-      plt.annotate(strcase, xy=(x,y), xytext=(x,y+6), arrowprops=dict(arrowstyle="->"))
+      y = last_ndays
+      x = last_confirmed
+      plt.annotate(strcase, xy=(x,y), xytext=(x+20,y-5), arrowprops=dict(arrowstyle="->"))
     
     thick = 3 if c in highlight else 1
-    plt.plot(xbasis, gaussian_filter1d(ybasis, sigma=1), label=c, linewidth=thick)
+    plt.plot(xbasis, ybasis, label=c, linewidth=thick)
 
   plt.xlabel("Number of confirms")
   plt.ylabel("Days taken")
-  plt.title("Speed of doubling number of cases")
+  plt.title("Days taken to double number of cases")
   plt.legend()
   fig.show()
 
