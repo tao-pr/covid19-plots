@@ -23,6 +23,11 @@ def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
     thick = 3 if c in highlight else 1
     plt.plot(gaussian_filter1d(cnt["Confirmed"], sigma=2), label=c, linewidth=thick)
 
+    if c in ["Thailand"]:
+      # Draw cutoff vertical line at latest case of Thailand
+      x = cnt.tail(1).index.tolist()[0]
+      plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
+
   plt.xlabel("Days from 100th case")
   plt.ylabel("Cases")
   plt.title("Accumulated Cases Daily, since 100th case")
@@ -44,7 +49,7 @@ def plot_daily_patients(figno, step, countries, max_days=None, highlight=[]):
     thick = 3 if c in highlight else 1
     plt.plot(gaussian_filter1d(cnt["Patients"], sigma=2), label=c, linewidth=thick)
 
-    if c=="Thailand":
+    if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
       x = cnt.tail(1).index.tolist()[0]
       plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
@@ -75,6 +80,11 @@ def plot_daily_increment(figno, step, countries, max_days=None, highlight=[]):
     thick = 3 if c in highlight else 1
     plt.plot(cnt["sma"], label=c, linewidth=thick)
 
+    if c in ["Thailand"]:
+      # Draw cutoff vertical line at latest case of Thailand
+      x = cnt.tail(1).index.tolist()[0]
+      plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
+
   plt.xlabel("Days from 100th case")
   plt.ylabel("% Increase")
   plt.title("Case Incremental Rate %, since 100th case")
@@ -95,8 +105,10 @@ def plot_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
     thick = 3 if c in highlight else 1
     plt.plot(gaussian_filter1d(cnt["ratio_recovered"], sigma=2), label=c, linewidth=thick)
 
-  # Plot recovery pivot point (7 days)
-  plt.axvline(x=7, ymin=0, ymax=100, linestyle="dotted")
+    if c in ["Thailand"]:
+      # Draw cutoff vertical line at latest case of Thailand
+      x = cnt.tail(1).index.tolist()[0]
+      plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
 
   plt.xlabel("Days from 100th case")
   plt.ylabel("% Recovered")
@@ -119,7 +131,7 @@ def plot_mortal_rate(figno, step, countries, max_days=None, highlight=[]):
     thick = 3 if c in highlight else 1
     plt.plot(gaussian_filter1d(cnt["ratio_death"], sigma=2), label=c, linewidth=thick)
 
-    if c=="Thailand":
+    if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
       x = cnt.tail(1).index.tolist()[0]
       plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
@@ -150,7 +162,7 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
       y = cnt.tail(1)["ratio_death/rec"].tolist()[0]
       plt.annotate("UK", xy=(x,y), xytext=(x-3,y+5), arrowprops=dict(arrowstyle="->"))
 
-    if c=="Thailand":
+    if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
       x = cnt.tail(1).index.tolist()[0]
       plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
@@ -189,7 +201,7 @@ if __name__ == '__main__':
   #
   plt.rcParams['font.sans-serif'] = ['HatchwayM'] + plt.rcParams['font.sans-serif']
 
-  max_days = 15
+  max_days = 14
   highlight = ["Thailand"]
 
   # Plot
