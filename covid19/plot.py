@@ -76,7 +76,7 @@ def plot_daily_increment(figno, step, countries, max_days=None, highlight=[]):
 
     # Movine average for smoothening
     # cnt["sma"] = 100 * cnt["new_confirmed"].rolling(window=5).mean()
-    cnt.loc[:,"sma"] = 100 * gaussian_filter1d(cnt["new_confirmed"], sigma=2)
+    cnt.loc[:,"sma"] = 100 * gaussian_filter1d(cnt["new_confirmed"], sigma=1)
     thick = 3 if c in highlight else 1
     plt.plot(cnt["sma"], label=c, linewidth=thick)
 
@@ -129,7 +129,7 @@ def plot_mortal_rate(figno, step, countries, max_days=None, highlight=[]):
       cnt = cnt[cnt.index < max_days]
     cnt.loc[:,"ratio_death"] = 100 * cnt["ratio_death"]
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["ratio_death"], sigma=2), label=c, linewidth=thick)
+    plt.plot(cnt["ratio_death"], label=c, linewidth=thick)
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
