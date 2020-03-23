@@ -42,15 +42,13 @@ The program will show several plots
 
 ## Sample plots
 
-![Accumulated cases](plot/case.png)
+![Days taken to double cases](plot/days-taken-to-double.png)
 
-![Daily increment](plot/increment.png)
+![Days taken to recover](plot/days-taken-to-recover.png)
 
-![mortal rate](plot/mortal.png)
+![mortal over recovery rate](plot/mortal-over-recovery.png)
 
-![Recovery rate](plot/recovery.png)
-
-![Mortal over recovery](plot/mortal-over-recovery.png)
+![Recovery per day](plot/recover-per-day.png)
 
 ## Licence
 
