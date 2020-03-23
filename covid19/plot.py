@@ -174,6 +174,52 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
   fig.show()
 
 
+def plot_time_to_double_cases(figno, step, countries, max_days=None, highlight=[]):
+  """
+  Starting from 100th case of the nation
+  """
+  fig = plt.figure(figno)
+
+  for c in countries:
+    cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=100)]
+    cnt.index = np.arange(0, len(cnt)) # Index by num of days from 100th case
+
+    xbasis = [100]
+    while len(xbasis)<7: xbasis.append(xbasis[-1]*2)
+    ybasis = []
+    for ncase in xbasis:
+      cases = cnt[cnt["Confirmed"]>ncase]
+      if len(cases)>0:
+        ndays = cases.head(1).index.tolist()[0]
+        ybasis.append(ndays)
+    xbasis = xbasis[:len(ybasis)]
+
+    if c=="Thailand":
+      last_confirmed = cnt["Confirmed"].tail(1).tolist()[0]
+      last_ndays = cnt.tail(1).index.tolist()[0]
+
+      # Extend the line with latest observation
+      ybasis.append(last_ndays)
+      xbasis.append(last_confirmed)
+
+      strcase = "{} cases after {} days".format(
+        last_confirmed,
+        last_ndays)
+
+      x = last_ndays
+      y = last_confirmed
+      plt.annotate(strcase, xy=(x,y), xytext=(x,y+6), arrowprops=dict(arrowstyle="->"))
+    
+    thick = 3 if c in highlight else 1
+    plt.plot(xbasis, gaussian_filter1d(ybasis, sigma=1), label=c, linewidth=thick)
+
+  plt.xlabel("Number of confirms")
+  plt.ylabel("Days taken")
+  plt.title("Speed of doubling number of cases")
+  plt.legend()
+  fig.show()
+
+
 if __name__ == '__main__':
   """
   Usage:
@@ -211,4 +257,5 @@ if __name__ == '__main__':
   plot_recovery_rate(4, step, countries, max_days, highlight)
   plot_mortal_rate(5, step, countries, max_days, highlight)
   plot_mortal_over_recovery_rate(6, step, countries, max_days, highlight)
+  plot_time_to_double_cases(7, step, countries, max_days, highlight)
   input("Press RETURN to end ...")

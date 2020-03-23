@@ -12,9 +12,9 @@ First of all, create a new virtual environment and install python packages by:
 
 ```bash
 
-$ virtualenv covid
-$ source covid/bin/activate
-$ covid/bin/pip3 install -r requirements.txt
+$ virtualenv covidenv
+$ source covidenv/bin/activate
+$ pip3 install -r requirements.txt
 ```
 
 Clone the Covid-19 daily case data repo somewhere
@@ -29,13 +29,13 @@ Make sure you have the virtual env activated, then do following:
 
 ```bash
 
-$ covid/bin/python3 -m covid19.plot {PATH_TO_COVID19_GIT_REPOPATH}
+$ python3 -m covid19.plot {PATH_TO_COVID19_GIT_REPOPATH}
 ```
 
 For example:
 
 ```bash
-$ covid/bin/python3 -m covid19.plot $HOME/3rd/COVID-19/
+$ python3 -m covid19.plot $HOME/3rd/COVID-19/
 ```
 
 The program will show several plots
