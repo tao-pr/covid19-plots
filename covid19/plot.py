@@ -253,7 +253,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
 
       y = last_ndays
       x = last_recov
-      plt.annotate(strcase, xy=(x,y), xytext=(x+15,y-6), arrowprops=dict(arrowstyle="->"))
+      plt.annotate(strcase, xy=(x,y), xytext=(x+3,y-20), arrowprops=dict(arrowstyle="->"))
     
     thick = 3 if c in highlight else 1
     plt.plot(xbasis, ybasis, label=c, linewidth=thick)
@@ -267,12 +267,12 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
 
 def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[]):
   """
-  Start from 1st case
+  Start from 100th case
   """
   fig = plt.figure(figno)
 
   for c in countries:
-    cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=1)]
+    cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=100)]
     cnt["days"] = np.arange(0, len(cnt))
     cnt["recover_per_day"] = cnt["Recovered"] / cnt["days"]
     cnt["recover_per_day"] = cnt["recover_per_day"].fillna(0)
@@ -281,14 +281,6 @@ def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[])
 
     # Start showing from 20th day after first case
     cnt = cnt[cnt.index > 20]
-
-    # if c=="Thailand":
-    #   first_recov = cnt[cnt["Recovered"]>0]
-    #   x = first_recov.head(1).index.tolist()[0]
-    #   y = first_recov.head(1)["recover_per_day"].tolist()[0]
-
-    #   strcase = "First recovery after {} days".format(x)
-    #   plt.annotate(strcase, xy=(x,y), xytext=(x+1,y+6), arrowprops=dict(arrowstyle="->"))
 
     thick = 3 if c in highlight else 1
     plt.plot(cnt["recover_per_day"], label=c, linewidth=thick)
