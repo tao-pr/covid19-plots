@@ -26,6 +26,23 @@ def load_daily_cases(d):
   for tag in csv_list:
     print(colored("Reading : ", "cyan"), tag)
     df = pd.read_csv(join(q,tag), header="infer")
+
+    # Drop excessive columns which were added recently
+    for c in ["FIPS","Admin2","Active","Combined_Key"]:
+      if c in df.columns:
+        df = df.drop(columns=[c])
+
+    # Re-map columns which were renamed recently
+    m = {
+      "Province_State": "Province/State",
+      "Country_Region": "Country/Region",
+      "Last_Update": "Last_Update",
+      "Lat": "Latitude",
+      "Long_": "Longitude"
+    }
+
+    df = df.rename(m, axis="columns")
+
     df["date"] = get_date(tag)
     daily.append(df)
   daily = pd.concat(daily)
