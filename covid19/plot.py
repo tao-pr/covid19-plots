@@ -16,6 +16,17 @@ lockdown = {
   "Italy": "2020-03-11"
 }
 
+markers = {
+  "Thailand": "green",
+  "Germany": "black",
+  "Italy": "red",
+  "Spain": "orange",
+  "France": "blue",
+  "UK": "gray",
+  "US": "brown",
+  "South Korea": "yellow"
+}
+
 def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
   """
   Starting from 100th case of the nation
@@ -27,7 +38,7 @@ def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
     if max_days:
       cnt = cnt[cnt.index < max_days]
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["Confirmed"], sigma=1), label=c, linewidth=thick)
+    plt.plot(gaussian_filter1d(cnt["Confirmed"], sigma=1), label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -53,7 +64,7 @@ def plot_daily_patients(figno, step, countries, max_days=None, highlight=[]):
       cnt = cnt[cnt.index < max_days]
 
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["Patients"], sigma=2), label=c, linewidth=thick)
+    plt.plot(gaussian_filter1d(cnt["Patients"], sigma=2), label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -84,7 +95,7 @@ def plot_daily_increment(figno, step, countries, max_days=None, highlight=[]):
     # cnt["sma"] = 100 * cnt["new_confirmed"].rolling(window=5).mean()
     cnt.loc[:,"sma"] = 100 * gaussian_filter1d(cnt["new_confirmed"], sigma=1)
     thick = 3 if c in highlight else 1
-    plt.plot(cnt["sma"], label=c, linewidth=thick)
+    plt.plot(cnt["sma"], label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -109,7 +120,7 @@ def plot_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
       cnt = cnt[cnt.index < max_days]
     cnt.loc[:,"ratio_recovered"] = 100 * cnt["ratio_recovered"]
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["ratio_recovered"], sigma=1), label=c, linewidth=thick)
+    plt.plot(gaussian_filter1d(cnt["ratio_recovered"], sigma=1), label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -135,7 +146,7 @@ def plot_mortal_rate(figno, step, countries, max_days=None, highlight=[]):
       cnt = cnt[cnt.index < max_days]
     cnt.loc[:,"ratio_death"] = 100 * cnt["ratio_death"]
     thick = 3 if c in highlight else 1
-    plt.plot(cnt["ratio_death"], label=c, linewidth=thick)
+    plt.plot(cnt["ratio_death"], label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -160,7 +171,7 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
     if max_days:
       cnt = cnt[cnt.index < max_days]
     thick = 3 if c in highlight else 1
-    plt.plot(cnt["ratio_death/rec"], label=c, linewidth=thick)
+    plt.plot(cnt["ratio_death/rec"], label=c, linewidth=thick, color=markers[c])
 
     if c=="France" and not max_days:
       # Annotate the peak
@@ -218,7 +229,7 @@ def plot_time_to_double_cases(figno, step, countries, max_days=None, highlight=[
       plt.annotate(strcase, xy=(x,y), xytext=(x+20,y-5), arrowprops=dict(arrowstyle="->"))
     
     thick = 3 if c in highlight else 1
-    plt.plot(xbasis, ybasis, label=c, linewidth=thick)
+    plt.plot(xbasis, ybasis, label=c, linewidth=thick, color=markers[c])
 
   plt.xlabel("Number of confirms")
   plt.ylabel("Days taken")
@@ -263,7 +274,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
       plt.annotate(strcase, xy=(x,y), xytext=(x-20,y-30), arrowprops=dict(arrowstyle="->"))
     
     thick = 3 if c in highlight else 1
-    plt.plot(xbasis, ybasis, label=c, linewidth=thick)
+    plt.plot(xbasis, ybasis, label=c, linewidth=thick, color=markers[c])
 
   plt.xlabel("Number of Recovered cases")
   plt.ylabel("Days taken")
@@ -290,7 +301,7 @@ def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[])
     cnt = cnt[cnt.index > 20]
 
     thick = 3 if c in highlight else 1
-    plt.plot(cnt["recover_per_day"], label=c, linewidth=thick)
+    plt.plot(cnt["recover_per_day"], label=c, linewidth=thick, color=markers[c])
 
   plt.xlabel("Days")
   plt.ylabel("Avg recovered / day")
@@ -324,7 +335,15 @@ if __name__ == '__main__':
   # > import matplotlib.font_manager
   # > matplotlib.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')
   #
-  plt.rcParams['font.sans-serif'] = ['HatchwayM'] + plt.rcParams['font.sans-serif']
+  plt.style.use('seaborn') # REF: https://matplotlib.org/3.1.0/gallery/style_sheets/style_sheets_reference.html
+  #plt.rcParams['font.sans-serif'] = ['HatchwayM'] + plt.rcParams['font.sans-serif']
+  plt.rcParams.update({
+    "figure.figsize": (10,5),
+    "axes.titlesize": 15,
+    "legend.fontsize": "medium"
+  })
+
+  print(plt.rcParams)
 
   max_days = None
   highlight = ["Thailand", "Germany"]
