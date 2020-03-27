@@ -42,13 +42,13 @@ The program will show several plots
 
 ## Sample plots
 
-![Days taken to double cases](plot/days-taken-to-double.png)
+![Mortal-over-recovery](plots/mortal-reco.png)
 
-![Days taken to recover](plot/days-taken-to-recover.png)
+![Recovery-rate](plots/recovery.png)
 
-![mortal over recovery rate](plot/mortal-over-recovery.png)
+![Mortal-rate](plots/mortal.png)
 
-![Recovery per day](plot/recover-per-day.png)
+![Days-taken-to-recover](plots/day-recover.png)
 
 ## Licence
 
