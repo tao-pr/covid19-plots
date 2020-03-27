@@ -10,6 +10,12 @@ from termcolor import colored
 
 from covid19.data import *
 
+lockdown = {
+  "France": "2020-03-17",
+  "Germany": "2020-03-22",
+  "Italy": "2020-03-11"
+}
+
 def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
   """
   Starting from 100th case of the nation
@@ -21,7 +27,7 @@ def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
     if max_days:
       cnt = cnt[cnt.index < max_days]
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["Confirmed"], sigma=2), label=c, linewidth=thick)
+    plt.plot(gaussian_filter1d(cnt["Confirmed"], sigma=1), label=c, linewidth=thick)
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -103,7 +109,7 @@ def plot_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
       cnt = cnt[cnt.index < max_days]
     cnt.loc[:,"ratio_recovered"] = 100 * cnt["ratio_recovered"]
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["ratio_recovered"], sigma=2), label=c, linewidth=thick)
+    plt.plot(gaussian_filter1d(cnt["ratio_recovered"], sigma=1), label=c, linewidth=thick)
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -154,13 +160,14 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
     if max_days:
       cnt = cnt[cnt.index < max_days]
     thick = 3 if c in highlight else 1
-    plt.plot(gaussian_filter1d(cnt["ratio_death/rec"], sigma=1), label=c, linewidth=thick)
+    plt.plot(cnt["ratio_death/rec"], label=c, linewidth=thick)
 
-    if c=="UK" and not max_days:
-      # Draw an arrow pointing at UK's latest spot
-      x = cnt.tail(1).index.tolist()[0]
-      y = cnt.tail(1)["ratio_death/rec"].tolist()[0]
-      plt.annotate("UK", xy=(x,y), xytext=(x-3,y+5), arrowprops=dict(arrowstyle="->"))
+    if c=="France" and not max_days:
+      # Annotate the peak
+      peak = cnt[cnt["ratio_death/rec"] == cnt["ratio_death/rec"].max()]
+      x = peak.tail(1).index.tolist()[0]
+      y = peak.tail(1)["ratio_death/rec"].tolist()[0]
+      plt.annotate("{:.1f}X".format(y), xy=(x,y), xytext=(x-10,y-5), arrowprops=dict(arrowstyle="->"))
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -253,7 +260,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
 
       y = last_ndays
       x = last_recov
-      plt.annotate(strcase, xy=(x,y), xytext=(x+3,y-20), arrowprops=dict(arrowstyle="->"))
+      plt.annotate(strcase, xy=(x,y), xytext=(x-20,y-30), arrowprops=dict(arrowstyle="->"))
     
     thick = 3 if c in highlight else 1
     plt.plot(xbasis, ybasis, label=c, linewidth=thick)
@@ -309,7 +316,7 @@ if __name__ == '__main__':
 
   step = step.reset_index(drop=False)
 
-  countries = ["Thailand","Germany","Italy","France","UK","US","South Korea"]
+  countries = ["Thailand","Germany","Italy","Spain","France","UK","US","South Korea"]
 
   # Configure matplot
   # NOTE: Font can be inspected by
@@ -319,8 +326,8 @@ if __name__ == '__main__':
   #
   plt.rcParams['font.sans-serif'] = ['HatchwayM'] + plt.rcParams['font.sans-serif']
 
-  max_days = 14
-  highlight = ["Thailand"]
+  max_days = None
+  highlight = ["Thailand", "Germany"]
 
   excep = lambda cnt,c: list(set(cnt)-set([c]))
 
@@ -331,7 +338,7 @@ if __name__ == '__main__':
   plot_recovery_rate(4, step, countries, max_days, highlight)
   plot_mortal_rate(5, step, countries, max_days, highlight)
   plot_mortal_over_recovery_rate(6, step, countries, max_days, highlight)
-  plot_time_to_double_cases(7, step, countries, max_days, highlight)
+  # plot_time_to_double_cases(7, step, countries, max_days, highlight)
   plot_time_to_recover(8, step, countries, max_days, highlight)
   plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
   input("Press RETURN to end ...")
