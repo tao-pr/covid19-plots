@@ -42,8 +42,7 @@ def load_daily_cases(d):
     }
 
     df = df.rename(m, axis="columns")
-
-    df["date"] = get_date(tag)
+    df = df.assign(date=get_date(tag))
     daily.append(df)
   daily = pd.concat(daily)
 
