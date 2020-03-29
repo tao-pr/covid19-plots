@@ -307,8 +307,8 @@ def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[])
     cnt = cnt[cnt["recover_per_day"]>0] # Cut off, starting from 1st recovery
     cnt = cnt.set_index("days")
 
-    # Start showing from 20th day after first case
-    cnt = cnt[cnt.index > 20]
+    # Start showing from 7th day after first case
+    cnt = cnt[cnt.index >= 7]
 
     thick = 3 if c in highlight else 1
     plt.plot(cnt["recover_per_day"], label=c, linewidth=thick, color=markers[c])
