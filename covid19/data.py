@@ -42,8 +42,7 @@ def load_daily_cases(d):
     }
 
     df = df.rename(m, axis="columns")
-
-    df["date"] = get_date(tag)
+    df = df.assign(date=get_date(tag))
     daily.append(df)
   daily = pd.concat(daily)
 
@@ -59,8 +58,6 @@ def clean_country(cnt):
     - Others
     - Cruise Ship
   """
-  # if type(cnt)==float:
-  #   return "Others"
 
   if cnt=="Viet Nam":
     return "Vietnam"
@@ -122,6 +119,7 @@ def make_daily_step(wranged):
   df.loc[:,"ratio_recovered"] = df["Recovered"] / (df["Confirmed"] - df["Recovered"])
   df.loc[:,"ratio_death"]     = df["Deaths"] / (df["Confirmed"] - df["Recovered"])
   df.loc[:,"ratio_death/rec"] = df["Deaths"] / df["Recovered"]
+  df.loc[:,"ratio_death-rec"] = (df["Deaths"] - df["Recovered"]) / df["Confirmed"]
   
   df.loc[:,"ratio_recovered"] = df["ratio_recovered"].fillna(0)
   df.loc[:,"ratio_death"]     = df["ratio_death"].fillna(0)

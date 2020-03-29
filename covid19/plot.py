@@ -17,15 +17,21 @@ lockdown = {
 }
 
 markers = {
-  "Thailand": "green",
+  "Thailand": "red",
   "Germany": "black",
-  "Italy": "red",
+  "Italy": "teal",
   "Spain": "orange",
   "France": "blue",
   "UK": "gray",
-  "US": "brown",
-  "South Korea": "yellow"
+  "US": "magenta",
+  "South Korea": "maroon"
 }
+
+def save_fig(figno, fig):
+  """
+  Save a plot figure to an image, named by its figure number
+  """
+  fig.savefig("plots/fig-{}-AA.png".format(figno))
 
 def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
   """
@@ -50,6 +56,7 @@ def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
   plt.title("Accumulated Cases Daily, since 100th case")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 def plot_daily_patients(figno, step, countries, max_days=None, highlight=[]):
   """
@@ -78,6 +85,7 @@ def plot_daily_patients(figno, step, countries, max_days=None, highlight=[]):
   plt.title("Accumulated Active Patients Daily, since 100th case")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
 def plot_daily_increment(figno, step, countries, max_days=None, highlight=[]):
@@ -107,6 +115,7 @@ def plot_daily_increment(figno, step, countries, max_days=None, highlight=[]):
   plt.title("Case Incremental Rate %, since 100th case")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 def plot_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
   """
@@ -132,6 +141,7 @@ def plot_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
   plt.title("Percentage of recovery, since 100th case")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
 def plot_mortal_rate(figno, step, countries, max_days=None, highlight=[]):
@@ -158,9 +168,10 @@ def plot_mortal_rate(figno, step, countries, max_days=None, highlight=[]):
   plt.title("Mortal rate, since 100th case")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
-def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
+def plot_mortal_minus_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
   """
   Starting from 100th case of the nation
   """
@@ -171,14 +182,7 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
     if max_days:
       cnt = cnt[cnt.index < max_days]
     thick = 3 if c in highlight else 1
-    plt.plot(cnt["ratio_death/rec"], label=c, linewidth=thick, color=markers[c])
-
-    if c=="France" and not max_days:
-      # Annotate the peak
-      peak = cnt[cnt["ratio_death/rec"] == cnt["ratio_death/rec"].max()]
-      x = peak.tail(1).index.tolist()[0]
-      y = peak.tail(1)["ratio_death/rec"].tolist()[0]
-      plt.annotate("{:.1f}X".format(y), xy=(x,y), xytext=(x-10,y-5), arrowprops=dict(arrowstyle="->"))
+    plt.plot(cnt["ratio_death-rec"], label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -186,10 +190,11 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
       plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
 
   plt.xlabel("Days from 100th case")
-  plt.ylabel("Mortal / Recovery")
-  plt.title("Ratio of mortal over recovery, since 100th case")
+  plt.ylabel("Ratio of (Mortal - Recovery)")
+  plt.title("Mortal rate weighted by recovery, since 100th case")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
 def plot_time_to_double_cases(figno, step, countries, max_days=None, highlight=[]):
@@ -236,6 +241,7 @@ def plot_time_to_double_cases(figno, step, countries, max_days=None, highlight=[
   plt.title("Days taken to double number of cases")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
 def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
@@ -248,7 +254,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
     cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=1)]
     cnt.index = np.arange(0, len(cnt)) # Index by num of days from 1st case
 
-    xbasis = np.arange(0,100).tolist()
+    xbasis = np.arange(0,150).tolist()
     ybasis = []
     for nrecovered in xbasis:
       recov = cnt[cnt["Recovered"]>nrecovered]
@@ -257,7 +263,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
         ybasis.append(ndays)
     xbasis = xbasis[:len(ybasis)]
 
-    if c=="Thailand":
+    if c in ["Thailand"]:
       last_recov = cnt["Recovered"].tail(1).tolist()[0]
       last_ndays = cnt.tail(1).index.tolist()[0]
 
@@ -265,13 +271,16 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
       ybasis.append(last_ndays)
       xbasis.append(last_recov)
 
-      strcase = "{} recovered in {} days".format(
+
+      strcase = "{}: {:.0f} recovered in {} days".format(
+        "Slowest" if c == "Thailand" else "Fastest",
         last_recov,
         last_ndays)
 
       y = last_ndays
       x = last_recov
-      plt.annotate(strcase, xy=(x,y), xytext=(x-20,y-30), arrowprops=dict(arrowstyle="->"))
+      y_ = y-30 if c=="Thailand" else y+15
+      plt.annotate(strcase, xy=(x,y), xytext=(x-20,y_), arrowprops=dict(arrowstyle="->"))
     
     thick = 3 if c in highlight else 1
     plt.plot(xbasis, ybasis, label=c, linewidth=thick, color=markers[c])
@@ -281,6 +290,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
   plt.title("Days taken to recover")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
 def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[]):
@@ -291,14 +301,14 @@ def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[])
 
   for c in countries:
     cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=100)]
-    cnt["days"] = np.arange(0, len(cnt))
-    cnt["recover_per_day"] = cnt["Recovered"] / cnt["days"]
-    cnt["recover_per_day"] = cnt["recover_per_day"].fillna(0)
-    cnt[cnt["recover_per_day"]>0] # Cut off, starting from 1st recovery
+    cnt.loc[:,"days"] = np.arange(0, len(cnt))
+    cnt.loc[:,"recover_per_day"] = cnt["Recovered"] / cnt["days"]
+    cnt.loc[:,"recover_per_day"] = cnt["recover_per_day"].fillna(0)
+    cnt = cnt[cnt["recover_per_day"]>0] # Cut off, starting from 1st recovery
     cnt = cnt.set_index("days")
 
-    # Start showing from 20th day after first case
-    cnt = cnt[cnt.index > 20]
+    # Start showing from 10th day after first case
+    cnt = cnt[cnt.index >= 10]
 
     thick = 3 if c in highlight else 1
     plt.plot(cnt["recover_per_day"], label=c, linewidth=thick, color=markers[c])
@@ -308,6 +318,7 @@ def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[])
   plt.title("Average number of recovery per day")
   plt.legend()
   fig.show()
+  save_fig(figno, fig)
 
 
 if __name__ == '__main__':
@@ -356,7 +367,7 @@ if __name__ == '__main__':
   plot_daily_increment(3, step, countries, max_days, highlight)
   plot_recovery_rate(4, step, countries, max_days, highlight)
   plot_mortal_rate(5, step, countries, max_days, highlight)
-  plot_mortal_over_recovery_rate(6, step, countries, max_days, highlight)
+  plot_mortal_minus_recovery_rate(6, step, countries, max_days, highlight)
   # plot_time_to_double_cases(7, step, countries, max_days, highlight)
   plot_time_to_recover(8, step, countries, max_days, highlight)
   plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
