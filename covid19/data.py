@@ -58,8 +58,6 @@ def clean_country(cnt):
     - Others
     - Cruise Ship
   """
-  # if type(cnt)==float:
-  #   return "Others"
 
   if cnt=="Viet Nam":
     return "Vietnam"
