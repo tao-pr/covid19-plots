@@ -31,7 +31,7 @@ def save_fig(figno, fig):
   """
   Save a plot figure to an image, named by its figure number
   """
-  fig.savefig("plots/fig-{}.png".format(figno))
+  fig.savefig("plots/fig-{}-AA.png".format(figno))
 
 def plot_daily_cases(figno, step, countries, max_days=None, highlight=[]):
   """
