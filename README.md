@@ -42,13 +42,13 @@ The program will show several plots
 
 ## Sample plots
 
-![Sample plot](plots/fig-2.png)
-![Sample plot](plots/fig-3.png)
-![Sample plot](plots/fig-4.png)
-![Sample plot](plots/fig-5.png)
-![Sample plot](plots/fig-6.png)
-![Sample plot](plots/fig-8.png)
-![Sample plot](plots/fig-9.png)
+![Sample plot](plots/fig-2-AA.png)
+![Sample plot](plots/fig-3-AA.png)
+![Sample plot](plots/fig-4-AA.png)
+![Sample plot](plots/fig-5-AA.png)
+![Sample plot](plots/fig-6-AA.png)
+![Sample plot](plots/fig-8-AA.png)
+![Sample plot](plots/fig-9-AA.png)
 
 ## Licence
 
