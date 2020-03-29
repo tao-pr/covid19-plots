@@ -42,13 +42,13 @@ The program will show several plots
 
 ## Sample plots
 
-![Mortal-over-recovery](plots/mortal-reco.png)
-
-![Recovery-rate](plots/recovery.png)
-
-![Mortal-rate](plots/mortal.png)
-
-![Days-taken-to-recover](plots/day-recover.png)
+![Sample plot](plots/fig-2-AA.png)
+![Sample plot](plots/fig-3-AA.png)
+![Sample plot](plots/fig-4-AA.png)
+![Sample plot](plots/fig-5-AA.png)
+![Sample plot](plots/fig-6-AA.png)
+![Sample plot](plots/fig-8-AA.png)
+![Sample plot](plots/fig-9-AA.png)
 
 ## Licence
 
