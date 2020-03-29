@@ -121,6 +121,7 @@ def make_daily_step(wranged):
   df.loc[:,"ratio_recovered"] = df["Recovered"] / (df["Confirmed"] - df["Recovered"])
   df.loc[:,"ratio_death"]     = df["Deaths"] / (df["Confirmed"] - df["Recovered"])
   df.loc[:,"ratio_death/rec"] = df["Deaths"] / df["Recovered"]
+  df.loc[:,"ratio_death-rec"] = (df["Deaths"] - df["Recovered"]) / df["Confirmed"]
   
   df.loc[:,"ratio_recovered"] = df["ratio_recovered"].fillna(0)
   df.loc[:,"ratio_death"]     = df["ratio_death"].fillna(0)

@@ -171,7 +171,7 @@ def plot_mortal_rate(figno, step, countries, max_days=None, highlight=[]):
   save_fig(figno, fig)
 
 
-def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
+def plot_mortal_minus_recovery_rate(figno, step, countries, max_days=None, highlight=[]):
   """
   Starting from 100th case of the nation
   """
@@ -182,14 +182,7 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
     if max_days:
       cnt = cnt[cnt.index < max_days]
     thick = 3 if c in highlight else 1
-    plt.plot(cnt["ratio_death/rec"], label=c, linewidth=thick, color=markers[c])
-
-    if c=="France" and not max_days:
-      # Annotate the peak
-      peak = cnt[cnt["ratio_death/rec"] == cnt["ratio_death/rec"].max()]
-      x = peak.tail(1).index.tolist()[0]
-      y = peak.tail(1)["ratio_death/rec"].tolist()[0]
-      plt.annotate("{:.1f}X".format(y), xy=(x,y), xytext=(x-10,y-5), arrowprops=dict(arrowstyle="->"))
+    plt.plot(cnt["ratio_death-rec"], label=c, linewidth=thick, color=markers[c])
 
     if c in ["Thailand"]:
       # Draw cutoff vertical line at latest case of Thailand
@@ -197,8 +190,8 @@ def plot_mortal_over_recovery_rate(figno, step, countries, max_days=None, highli
       plt.axvline(x=x, ymin=0, ymax=1000, linestyle="dotted")
 
   plt.xlabel("Days from 100th case")
-  plt.ylabel("Mortal / Recovery")
-  plt.title("Ratio of mortal over recovery, since 100th case")
+  plt.ylabel("Ratio of (Mortal - Recovery)")
+  plt.title("Mortal rate weighted by recovery, since 100th case")
   plt.legend()
   fig.show()
   save_fig(figno, fig)
@@ -279,7 +272,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
       xbasis.append(last_recov)
 
 
-      strcase = "{}: {} recovered in {} days".format(
+      strcase = "{}: {:.0f} recovered in {} days".format(
         "Slowest" if c == "Thailand" else "Fastest",
         last_recov,
         last_ndays)
@@ -374,7 +367,7 @@ if __name__ == '__main__':
   plot_daily_increment(3, step, countries, max_days, highlight)
   plot_recovery_rate(4, step, countries, max_days, highlight)
   plot_mortal_rate(5, step, countries, max_days, highlight)
-  plot_mortal_over_recovery_rate(6, step, countries, max_days, highlight)
+  plot_mortal_minus_recovery_rate(6, step, countries, max_days, highlight)
   # plot_time_to_double_cases(7, step, countries, max_days, highlight)
   plot_time_to_recover(8, step, countries, max_days, highlight)
   plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
