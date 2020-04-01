@@ -337,7 +337,7 @@ def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, h
 
   plt.xlabel("Cases")
   plt.ylabel("% Remaining recovering patients")
-  plt.title("Remaing recovering patients in each country")
+  plt.title("Remaining recovering patients in each country")
   plt.legend()
   fig.show()
   save_fig(figno, fig)
