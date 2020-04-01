@@ -335,20 +335,29 @@ def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, h
     thick = 3 if c in highlight else 1
     plt.plot(cnt["ratio_outstanding"]*100, label=c, linewidth=thick, color=markers[c])
 
-    if c in ["Spain","Italy","South Korea"]:
+    keys = {
+      "Spain": "Still developing",
+      "Italy": "Still developing",
+      "Germany": "Slowing down",
+      "South Korea": "Ending soon"
+    }
+
+    if c in keys:
       last_y = cnt["ratio_outstanding"].tail(1).tolist()[0]*100
       last_x = cnt.tail(1).index.tolist()[0]
 
-      strcase = "Recovering: {:.0f} % left".format(last_y)
+      y_pos = last_y-15 if c=="Spain" else last_y+15
+
+      strcase = "{}: {:.0f} % left recovering".format(keys[c], last_y)
       plt.annotate(strcase,
         xy=(last_x,last_y),
-        xytext=(last_x+100,last_y+15), arrowprops=dict(arrowstyle="->"))
+        xytext=(last_x+100,y_pos), arrowprops=dict(arrowstyle="->"))
 
     if c in ["US"]:
       last_y = cnt["ratio_outstanding"].tail(1).tolist()[0]*100
       last_x = cnt.tail(1).index.tolist()[0]
 
-      strcase = "Still developing: {:.0f} % outstanding".format(last_y)
+      strcase = "Outbreak: {:.0f} % outstanding".format(last_y)
       plt.annotate(strcase, 
         xy=(last_x,last_y),
         xytext=(last_x-25000,last_y-10), arrowprops=dict(arrowstyle="->"))
