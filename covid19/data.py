@@ -65,7 +65,7 @@ def clean_country(cnt):
     return "UK"
   if cnt=="Taipei and environs" or cnt=="Taiwan*":
     return "Taiwan"
-  if cnt=="Republic of Korea" or cnt=='Korea':
+  if cnt=="Republic of Korea" or cnt=='Korea' or cnt=="Korea, South":
     return "South Korea"
   if cnt=="Republic of Moldova":
     return "Moldova"
@@ -114,16 +114,18 @@ def make_daily_step(wranged):
   df = wranged.sort_values(by=["Country/Region","date"])
   cnt = df.groupby(["Country/Region"])
 
-  df.loc[:,"new_confirmed"]   = cnt["Confirmed"].pct_change().replace([np.inf, -np.inf], np.nan).fillna(0)
-  df.loc[:,"new_patients"]    = cnt["Patients"].pct_change().replace([np.inf, -np.inf], np.nan).fillna(0)
-  df.loc[:,"ratio_recovered"] = df["Recovered"] / (df["Confirmed"] - df["Recovered"])
-  df.loc[:,"ratio_death"]     = df["Deaths"] / (df["Confirmed"] - df["Recovered"])
-  df.loc[:,"ratio_death/rec"] = df["Deaths"] / df["Recovered"]
-  df.loc[:,"ratio_death-rec"] = (df["Deaths"] - df["Recovered"]) / df["Confirmed"]
+  df.loc[:,"new_confirmed"]     = cnt["Confirmed"].pct_change().replace([np.inf, -np.inf], np.nan).fillna(0)
+  df.loc[:,"new_patients"]      = cnt["Patients"].pct_change().replace([np.inf, -np.inf], np.nan).fillna(0)
+  df.loc[:,"ratio_recovered"]   = df["Recovered"] / (df["Confirmed"] - df["Recovered"])
+  df.loc[:,"ratio_death"]       = df["Deaths"] / (df["Confirmed"] - df["Recovered"])
+  df.loc[:,"ratio_death/rec"]   = df["Deaths"] / df["Recovered"]
+  df.loc[:,"ratio_death-rec"]   = (df["Deaths"] - df["Recovered"]) / df["Confirmed"]
+  df.loc[:,"ratio_outstanding"] = df["Patients"]/df["Confirmed"]
   
-  df.loc[:,"ratio_recovered"] = df["ratio_recovered"].fillna(0)
-  df.loc[:,"ratio_death"]     = df["ratio_death"].fillna(0)
-  df.loc[:,"ratio_death/rec"] = df["ratio_death/rec"].fillna(0)
+  df.loc[:,"ratio_recovered"]   = df["ratio_recovered"].fillna(0)
+  df.loc[:,"ratio_death"]       = df["ratio_death"].fillna(0)
+  df.loc[:,"ratio_death/rec"]   = df["ratio_death/rec"].fillna(0)
+  df.loc[:,"ratio_outstanding"] = df["ratio_outstanding"].fillna(0)
 
   return df
 
