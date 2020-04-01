@@ -254,7 +254,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
     cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=1)]
     cnt.index = np.arange(0, len(cnt)) # Index by num of days from 1st case
 
-    xbasis = np.arange(0,150).tolist()
+    xbasis = np.arange(0,500).tolist()
     ybasis = []
     for nrecovered in xbasis:
       recov = cnt[cnt["Recovered"]>nrecovered]
