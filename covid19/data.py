@@ -65,7 +65,7 @@ def clean_country(cnt):
     return "UK"
   if cnt=="Taipei and environs" or cnt=="Taiwan*":
     return "Taiwan"
-  if cnt=="Republic of Korea" or cnt=='Korea':
+  if cnt=="Republic of Korea" or cnt=='Korea' or cnt=="Korea, South":
     return "South Korea"
   if cnt=="Republic of Moldova":
     return "Moldova"
