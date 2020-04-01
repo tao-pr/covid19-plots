@@ -24,7 +24,8 @@ markers = {
   "France": "blue",
   "UK": "gray",
   "US": "magenta",
-  "South Korea": "maroon"
+  "South Korea": "maroon",
+  "China": "yellow"
 }
 
 def save_fig(figno, fig):
@@ -320,6 +321,27 @@ def plot_recovery_over_days(figno, step, countries, max_days=None, highlight=[])
   fig.show()
   save_fig(figno, fig)
 
+def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, highlight=[]):
+  """
+  X : number of confirm cases
+  Y : ratio of outstanding patients (excluding deaths, recovered)
+  """
+  fig = plt.figure(figno)
+
+  for c in countries:
+    cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=100)]
+    cnt = cnt.set_index("Confirmed")
+
+    thick = 3 if c in highlight else 1
+    plt.plot(cnt["ratio_outstanding"]*100, label=c, linewidth=thick, color=markers[c])
+
+  plt.xlabel("Cases")
+  plt.ylabel("% Remaining recovering patients")
+  plt.title("Remaing recovering patients in each country")
+  plt.legend()
+  fig.show()
+  save_fig(figno, fig)
+
 
 if __name__ == '__main__':
   """
@@ -371,4 +393,5 @@ if __name__ == '__main__':
   # plot_time_to_double_cases(7, step, countries, max_days, highlight)
   plot_time_to_recover(8, step, countries, max_days, highlight)
   plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
+  plot_remaining_patients_vs_confirms(10, step, countries, max_days, highlight)
   input("Press RETURN to end ...")
