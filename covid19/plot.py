@@ -336,8 +336,8 @@ def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, h
     plt.plot(cnt["ratio_outstanding"]*100, label=c, linewidth=thick, color=markers[c])
 
     keys = {
-      "Spain": "Still developing",
-      "Italy": "Still developing",
+      "Spain": "Slowing down",
+      "Italy": "Slowing down",
       "Germany": "Slowing down",
       "South Korea": "Ending soon"
     }
@@ -347,6 +347,8 @@ def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, h
       last_x = cnt.tail(1).index.tolist()[0]
 
       y_pos = last_y-15 if c=="Spain" else last_y+15
+      if c=="Germany":
+        y_pos += 7
 
       strcase = "{}: {:.0f} % left recovering".format(keys[c], last_y)
       plt.annotate(strcase,
@@ -420,5 +422,5 @@ if __name__ == '__main__':
   # plot_time_to_double_cases(7, step, countries, max_days, highlight)
   plot_time_to_recover(8, step, countries, max_days, highlight)
   plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
-  plot_remaining_patients_vs_confirms(10, step, countries, max_days, highlight)
+  plot_remaining_patients_vs_confirms(10.1, step, countries, max_days, highlight)
   input("Press RETURN to end ...")
