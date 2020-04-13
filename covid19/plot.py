@@ -255,7 +255,7 @@ def plot_time_to_recover(figno, step, countries, max_days=None, highlight=[]):
     cnt = step[(step["Country/Region"]==c) & (step["Confirmed"]>=1)]
     cnt.index = np.arange(0, len(cnt)) # Index by num of days from 1st case
 
-    xbasis = np.arange(0,500).tolist()
+    xbasis = np.arange(0,1500).tolist()
     ybasis = []
     for nrecovered in xbasis:
       recov = cnt[cnt["Recovered"]>nrecovered]
@@ -336,9 +336,9 @@ def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, h
     plt.plot(cnt["ratio_outstanding"]*100, label=c, linewidth=thick, color=markers[c])
 
     keys = {
-      "Spain": "Slowing down",
-      "Italy": "Slowing down",
-      "Germany": "Slowing down",
+      "Spain": "Under control",
+      "Italy": "Under control",
+      "Germany": "Under control",
       "South Korea": "Ending soon"
     }
 
@@ -362,11 +362,11 @@ def plot_remaining_patients_vs_confirms(figno, step, countries, max_days=None, h
       strcase = "Outbreak: {:.0f} % outstanding".format(last_y)
       plt.annotate(strcase, 
         xy=(last_x,last_y),
-        xytext=(last_x-25000,last_y-10), arrowprops=dict(arrowstyle="->"))
+        xytext=(last_x-40000,last_y-15), arrowprops=dict(arrowstyle="->"))
 
   plt.xlabel("Total Confirmed Cases")
   plt.ylabel("% Remaining recovering patients")
-  plt.title("Remaining COVID-19 patients in each country (Apr-4)")
+  plt.title("Remaining COVID-19 patients in each country (Apr-12)")
   plt.legend()
   fig.show()
   save_fig(figno, fig)
@@ -422,5 +422,5 @@ if __name__ == '__main__':
   # plot_time_to_double_cases(7, step, countries, max_days, highlight)
   plot_time_to_recover(8, step, countries, max_days, highlight)
   plot_recovery_over_days(9, step, excep(countries,"UK"), max_days, highlight)
-  plot_remaining_patients_vs_confirms(10.1, step, countries, max_days, highlight)
+  plot_remaining_patients_vs_confirms(10.3, step, countries, max_days, highlight)
   input("Press RETURN to end ...")

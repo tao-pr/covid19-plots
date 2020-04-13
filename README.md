@@ -42,6 +42,7 @@ The program will show several plots
 
 ## Sample plots
 
+![Sample plot](plots/fig-10.3-AA.png)
 ![Sample plot](plots/fig-10.1-AA.png)
 ![Sample plot](plots/fig-10-AA.png)
 ![Sample plot](plots/fig-2-AA.png)
